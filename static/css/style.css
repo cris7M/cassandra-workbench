@@ -1,0 +1,237 @@
+.multiselect {
+  width: 200px;
+}
+
+*{
+	font-size: small ;
+    font-family: system-ui !important;
+    text-transform: uppercase !important;
+	
+}
+.selectBox {
+  position: relative;
+}
+
+.selectBox select {
+  width: 100%;
+  font-weight: bold;
+}
+
+.overSelect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+#checkboxes {
+	overflow: auto;
+	width: 100%;
+	height: 80px;
+	background-color: #000;
+	color: #fff;
+	font-weight: bold;
+  display: none;
+  border: 2px #b7b7b7 solid;
+  z-index: 9999;
+  position: absolute;
+}
+
+#checkboxes label {
+  display: block;
+}
+
+#checkboxes label:hover {
+  background-color: #1e90ff;
+}
+.container{
+	max-width: 100%!important;
+}
+.inputMod{
+border: 0;color:#fff;font-weight: bold;background-color: #000;
+}
+
+.btn-success {
+    color: #fff !important;
+    background-color: #000000 !important;
+    border-color: #d5d5d5 !important;
+}
+
+.btn-success:hover {
+    color: #fff !important;
+    background-color: #ddd !important;
+    border-color: #d5d5d5 !important;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 5px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+/*
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+*/
+
+.widthProp{
+	max-width: 100%;
+	overflow: auto;
+	margin-bottom: 50px;
+	height: 350px!important;
+}
+.TabIndex ul a{
+	text-decoration: none;
+}
+.TabIndex ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.TabIndex li {
+	font-size: smaller;
+    text-transform: uppercase;
+	text-align: center;
+    padding: 4px;
+    font-weight: bold;
+    margin-bottom: 7px;
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.TabIndex li:hover {
+    background-color: #000;
+	color: #fff;
+}
+
+
+.menuHeight{
+	height: 200px;
+	overflow: auto;
+}
+.CodeMirror{
+	height: 110px!important;
+	border:3px solid #ddd!important;
+}
+.color{
+	background-color: #000;
+    color: #fff;		
+	font-weight: bold;
+	text-align: center;
+}
+.test{
+	margin-top: 20px;
+}
+.alert-info{
+	font-size: smaller !important ;
+    text-transform: uppercase !important;
+    color: #ffffff !important;
+    /* font-weight: bold !important; */
+    background-color: #ef0021  !important;
+    border-color: #f5f5ff !important;
+}
+.btn-success {
+    font-weight: bold !important;
+}
+.Header{
+
+	font-size: xx-large;
+    text-transform: uppercase;
+    font-family: system-ui;
+    background-color: #000;
+    color: #fff;
+    letter-spacing: 0.04em;
+    /* font-size: 25px; */
+    text-align: center;
+    font-weight: bold;
+}
+
+.modal-content {
+    background-color: #fff !important;
+    font-weight: bold !important;
+}
+	.TableHeader{
+
+	font-family: system-ui !important;
+    text-transform: uppercase !important;
+    font-size: small !important;
+    background-color: #ef0021;
+	color:#fff;
+	letter-spacing: 0.04em;
+	font-size: 18px;
+	text-align: center;
+	font-weight: bold;
+}
+.title{
+	margin: auto;
+	width: 50%;
+	text-align: center;
+	background-color: #fff;
+	font-size: 20px;
+	color: #534e4e;
+	font-family: times;
+	border-radius: 5px;
+}
+.footer{
+	bottom:0;
+	position: fixed;
+	right: 0;
+	left: 0;
+	font-size: 14px;
+	background-color: #363232; 
+	color:#fff;
+	text-align: center;
+	font-weight: bold;
+}
+.record{
+
+	font-size: 15px;
+	background-color: #673ab7;
+	max-width: 850px;
+	font-weight: bold;
+	margin: auto ;
+	color: #fff;
+	padding: 25px;
+	margin-top: 25px;
+}
+.formMod{
+	font-size: 15px;
+	background-color: #241f6b;
+	max-width: 600px;
+	font-weight: bold;
+	margin: auto ;
+	color: #fff;
+	padding: 25px;
+	margin-top: 25px;
+}

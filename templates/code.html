@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+	//////////////////////////////////////////////////////
+	DESIGNED & DEVELOPED by Sanjay Kumar
+	Email: 			krishnasanjay010@gmail.com
+	//////////////////////////////////////////////////////
+-->
+<head>
+	<title>CASSANDRA WORKBENCH </title>
+  <link rel="stylesheet" type="text/css" href="static/css/style.css">
+	<link rel="stylesheet" type="text/css" href="static/plugins/codemirror/lib/codemirror.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     <!-- Bootstrap core CSS -->
+  <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+  <link href="static/jumbotron.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+  <script type="text/javascript" src="static/js/jquery.min.js"></script>
+  <script type="text/javascript" src="static/plugins/codemirror/lib/codemirror.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    var expanded = false;
+/*
+function hidePartition(){
+  document.getElementById('checkboxes').style.display="none";
+
+}*/
+    function showCheckboxes() {
+      var checkboxes = document.getElementById("checkboxes");
+      if (!expanded) {
+        checkboxes.style.display = "block";
+        expanded = true;
+      } else {
+        checkboxes.style.display = "none";
+        expanded = false;
+      }
+    }
+    </script>
+      <script type=text/javascript>
+      var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+      </script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var code = $(".codemirror-textarea")[0];
+        var editor = CodeMirror.fromTextArea(code, {
+        lineNumbers: true
+        });
+
+
+    $(document).ready(function(){
+        $('#checkHide').click(function() { 
+            $("#checkboxes").hide();
+          }); 
+        });
+
+    $('.remove').click(function(){
+      editor.setValue(" ");
+      $("#checkboxes").hide();
+
+    });
+
+    $('#checkboxes').click(function() { 
+      var val=document.getElementById('tableVal').value;
+      var checkboxes = document.getElementsByName('priKey');
+      var key=document.getElementById('inputMod').value;
+      var checkboxesChecked = [];
+      // loop over them all
+      var l=0;
+      var ar = new Array();
+      var check=0;
+      for (var i=0; i<checkboxes.length; i++) {
+          if(checkboxes[i].checked){
+            check++;
+            }
+          l++;
+      }
+      var f=0;
+      var final = '';
+        $('.ads_Checkbox:checked').each(function(){        
+            var values = $(this).val();
+            f++;
+            final += values + " =:" + values ;
+            if(check != f){
+              final += " and " ;
+            }
+
+        });
+    
+      
+    $.ajax({
+      type: "GET",
+      url: $SCRIPT_ROOT + "/getPartition/",
+      contentType: "application/json; charset=utf-8",
+      data: {keyspace:key,table:val},
+      success: function(response) {
+              var m=0;
+              for (var i=0; i<checkboxes.length; i++) {
+              if (checkboxes[i].checked) {
+                checkboxesChecked.push(checkboxes[i].value);
+                var opt=document.getElementById('opt').value;
+                var chkValue=checkboxes[i].value;
+                if(opt == 'Select' || opt == 'Update' || opt == 'Delete'){
+                  var k=i;
+                  var flag = false;
+                  c=k+1
+                  if((c>=response.data && c==check )|| check==0){
+                    flag=true;
+                  }else{
+                    editor.setValue("Please check the selection criteria");
+                  }
+                  if(flag === true){
+                    if(opt == 'Select'){
+                      editor.setValue("select * from "+val + " where " + final  )
+                    }else if(opt == 'Update'){
+                      editor.setValue("update "+val + " set x = x  where " + final  );
+                    }else if(opt == 'Delete'){
+                      editor.setValue("delete from "+val + " where " + final  );
+                    }
+                }
+                }
+              }
+            }
+          },
+            error: function(jqXHR, textStatus, errorThrown) {
+                  alert(errorThrown);
+                }
+            });     
+      });
+
+
+      $('#opt').change(function(e){
+        var val=document.getElementById('tableVal').value;
+        var key=document.getElementById('inputMod').value;
+        var opt=document.getElementById('opt').value;
+
+        if(opt === 'Insert'){
+          $('input[name=priKey]').prop('checked', false);
+        // editor.setValue("insert into " + val +"()");
+          $.ajax({
+                type: "GET",
+                url: $SCRIPT_ROOT + "/getTabCol/",
+                contentType: "application/json; charset=utf-8",
+                data: {echoValue:key,echoValue1:val},
+                success: function(response) {
+                    editor.setValue("insert into " + val+"("+response.data+")values()");
+                    },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });     
+        }else if(opt === 'Select'){
+          editor.setValue("Select *from " + val);
+        }else{
+          editor.setValue(" ");
+          $('input[name=priKey]').prop('checked', false);  
+          if(opt === 'Truncate'){
+          if(confirm("Are you sure to delete this table ! this action may affact your database or your internal database structure")){
+            editor.setValue("truncate " + val);
+            }else{
+            editor.setValue(" "); 
+            }
+          }} 
+      });
+    });
+
+    </script>
+    <script type="text/javascript">
+      function showTableNameInputBox(x){
+          document.getElementById("tableVal").value=x;
+      }
+
+      function getWindow(){
+        var modal = document.getElementById('myModal');
+          modal.style.display = "block";
+          window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+      }
+
+    </script>
+
+    <script type="text/javascript">
+      function showTablePrimaryKey(x,y){
+        $("#checkboxes").empty();
+            $.ajax({
+                type: "GET",
+                url: $SCRIPT_ROOT + "/getTablePrimaryKey/",
+                contentType: "application/json; charset=utf-8",
+                data: {echoValue:x , echoValue1:y },
+                success: function(response) {
+                  console.log(response);
+                  console.log(response.data[0]);
+                  for (i = 0; i < response.data.length; i++) {
+                    $("#checkboxes").append('<input type="checkbox" onClick="change_checkbox(this)" name="priKey" id="'+i+'" class="ads_Checkbox" value="'+response.data[i]+'">' +' ' + response.data[i] + '<br>' );
+                }
+                  /*$("#prim").append('<option value="' + data + '">');*/
+                    },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });     
+            return false;
+      }
+
+
+    </script>
+      <script type=text/javascript>
+      function showTableProp(x,y){
+          
+            $.ajax({
+                type: "GET",
+                url: $SCRIPT_ROOT + "/getTableProp/",
+                contentType: "application/json; charset=utf-8",
+                data: {echoValue:x , echoValue1:y },
+                success: function(data) {
+                  $("#echoResult").html(data);
+                    },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });     
+            return false;
+   }
+</script>
+</head>
+<body>
+
+<div class="Header">
+  CASSANDRA WORKBENCH
+</div>  
+<p id="xyz"></p>
+<div class="container">
+  <div class ="test">
+    <div class="row">
+    <!-- col-3 start -->
+      <div class="col-3">
+        <div class="row">
+          <div class="col-12 TabIndex">
+            <p class="alert alert-info" style="text-align: center;"><strong>Keyspaces:</strong></p>
+            <div class="menuHeight">
+              <ul>
+                {% for data in data %}
+                  {% for j in data %}
+                    <a href=" {{ url_for('callTable', test=j) }}"><li>{{ j }}</li></a>
+                  {% endfor %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="col-12 TabIndex" style="margin-top: 10px;">
+            <p class="alert alert-info" style="text-align: center;"><strong>Tables:</strong></p>
+            <div class="menuHeight">
+              <ul>
+                {% for value in value %}
+                  {% for j in value %}
+                    <a href="#" class="remove" onclick="showTablePrimaryKey('{{j}}','{{keyspace_name}}'); showTableNameInputBox('{{j}}');getWindow(); return showTableProp('{{j}}','{{keyspace_name}}'); "><li>{{ j }}</li></a>
+                  {% endfor %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- col-3 end -->
+      <!-- ******************************************************************************************************* -->
+      <!-- col-9 start -->
+      <div class="col-9">
+        <div class="row">
+          <div class="col-12">
+            <p class="alert alert-info"><strong>Run CQL query on server:</strong></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-11">
+            <form id="preview-form" action="/postCode" name="preview-form" method="POST" enctype="multipart/form-data">
+              <div class="row">
+                <div class="col-3">  
+                <span style="font-weight: bold;">Selected Keyspace:  <input  class="inputMod" id="inputMod" type="text" name="keyspace" value="{% print(keyspace_name) %}" readonly> </span>
+                </div>
+                <div class=" col-3">
+                   <span style="font-weight: bold;">Selected Table: <input  class="inputMod" type="text" name="tableVal" id="tableVal" value="{% print(tableName) %}" readonly> </span>
+                </div>
+                <div class="col-3">
+                  <select class="form-control" id="opt" style="font-weight: bold;color: #000;">
+                    <option>Operations</option>
+                    <option>Select</option>
+                    <option>Insert</option>
+                    <option>Update</option>
+                    <option>Delete</option>
+                    <option>Truncate</option>
+                  </select>
+                </div>
+                <div class="col-3">
+
+                 <div class="multiselect">
+    <div class="selectBox" onclick="showCheckboxes()">
+      <select class="form-control">
+        <option>Select Primary Keys</option>
+      </select>
+      <div class="overSelect">
+        
+      </div>
+    </div>
+    <div id="checkboxes">
+          {% for i in prim %}
+          <input type="checkbox" onClick="change_checkbox(this)" name="priKey" class="ads_Checkbox" value="{{ i }}">{{ i }}</input> <br>
+          {% endfor %}
+      </div>
+  </div>
+  <!--                   <select class="form-control" id="prim" style="font-weight: bold;color: #000;">
+                    <option>Primary Keys</option>
+                  </select>
+   -->              
+
+            </div>
+              </div>
+
+               <div class="form-group" id="checkHide" style="margin-top: 10px;">
+                <textarea class="codemirror-textarea" name="preview" id="preview" rows="2">{% print(codeValue) %}</textarea>
+                </div>
+          </div>
+          <div class="col-1">
+            <div class="form-group">
+             <a href="#" ><button type="button" style="bottom: 0;left: 0;right: 0;position: absolute;margin-bottom: 88px" name="preview-form-submit"  class="btn btn-success" id="preview-form-submit">Metrics</button></a>
+            
+            </div>
+            <div class="form-group">
+              <button type="submit" style="bottom: 0;left: 0;right: 0;position: absolute;margin-bottom: 18px" name="preview-form-submit"  class="btn btn-success" id="preview-form-submit" >Submit</button>
+            </form> 
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div id="myModal" class="modal">
+              <div class="modal-content" style="height:500px;overflow: auto;">
+                <p id="echoResult"></p> 
+              </div>
+            </div>
+            {% if rr =='msg' %}
+              <div class="alert alert-info" style="margin-top: 20px;" role="alert">
+                <strong>{{ message }}!</strong>
+              </div>
+            {% elif rr == 'error' %}
+              <div class="alert alert-danger" style="margin-top: 20px;" role="alert">
+                <strong>{{ message }}!</strong> Please check with <strong>Keyspace Name</strong> || <strong> Table Name</strong> || <strong> Operation </strong> || <strong> Code Syntax</strong>.
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="widthProp">
+              {% if test == "value" %}
+                <table id="example" class="table table-bordered">
+                  <thead class="color">
+                    {% for i in keys %}
+                      <th style="text-transform: capitalize;"> {{ i }}</th>
+                    {% endfor %} 
+                  </thead>
+              
+                  <tbody>    
+                    {% for row in rows %}  
+                    <tr>
+                    {% for j in row %} 
+                      <td style="text-align: center;">{{ j }}</td>
+                    {% endfor %}    
+                  </tr>
+                    {% endfor %}    
+                  </tbody>
+                
+                </table>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- col-9 end -->
+
+    </div>
+  </div>
+</div>
+
+
+<div class="footer">
+      &copy; 2023 krishnasanjay010@gmail.com
+</div>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#example').DataTable({
+      "pagingType": "full_numbers",
+      "searching": true,
+      "ordering": true,
+      "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+      "pageLength": 10
+    });
+  });
+</script>
+
+</body>
+</html>
